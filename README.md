@@ -1,11 +1,18 @@
 # protobuf-broker-cli
-explicar como he serializado el protobuf y que acepta mensajes JSON y poner un ejemplo  
-poner que se envia a una cola y ponerla como parametro
+This project provides a CLI tool that serializes a JSON file into a [Protocol Buffers](https://developers.google.com/protocol-buffers) message and sends it to a RabbitMQ queue.
+It also supports consuming messages from the queue using a parameter.  
+It's been developed with Java 17+ and Spring Boot.
 
-explicar que los mensajes se quedan en la cola para ser consumidos por cualquier cliente  
-hacer un consumidor psando otro parametro
+The protobuf message used is:
 
-# Running the Protobuf Sender with RabbitMQ
+```proto
+message Person {
+  required string name = 1;
+  required int32 id = 2;
+  optional string email = 3;
+}
+```
+The protobuf has been compiled to a Java class using **protoc-31.1-win64.zip** (https://github.com/protocolbuffers/protobuf/releases/tag/v31.1}
 
 ## Start RabbitMQ
 
@@ -15,11 +22,11 @@ Run RabbitMQ and its management console with the following command:
 docker-compose up rabbitmq
 ```
 This will start the RabbitMQ broker and the management console, accessible at:
-http://localhost:15672/
+**http://localhost:15672**
 
 Use the default credentials:  
-Username: guest  
-Password: guest  
+- Username: **guest**  
+- Password: **guest**  
 
 ## Build the application image
 Before running the sender, make sure to build the Docker image for the protobuf-sender service:
@@ -39,3 +46,42 @@ Example for a file stored at C:/tmp/folder2/example2.json:
 ```bash
 docker-compose run --rm -v "C:/tmp/folder2:/app/data" protobuf-sender --file=/app/data/example2.json
 ```
+An example of the JSON format supported is:
+```json
+{
+  "name": "Han Solo",
+  "id": 3,
+  "email": "han.solo@falcon.space"
+}
+```
+##  Consuming Messages from RabbitMQ  
+The tool can also consume messages from the RabbitMQ queue and log them.
+To do this, pass the parameter ```--consume=true```.
+**Example**:
+```bash
+docker-compose run --rm protobuf-sender --consume=true
+```
+## Notes ##
+- The application exits automatically after sending or consuming messages. For example, here is a simple Python consumer using pika:
+```python
+import pika
+
+connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+channel = connection.channel()
+
+channel.queue_declare(queue='person-queue')
+
+def callback(ch, method, properties, body):
+    print(f"Received raw message: {body}")
+
+channel.basic_consume(queue='person-queue',
+                      on_message_callback=callback,
+                      auto_ack=True)
+
+print('Waiting for messages. To exit press CTRL+C')
+channel.start_consuming()
+```
+
+- Messages remain in the queue until consumed by any client.
+
+- RabbitMQ must be running before sending or consuming messages.
