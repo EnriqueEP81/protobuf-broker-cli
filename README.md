@@ -1,5 +1,5 @@
-# protobuf-broker-cli
-This project provides a CLI tool that serializes a JSON file into a [Protocol Buffers](https://developers.google.com/protocol-buffers) message and sends it to a RabbitMQ queue.
+# protobuf-sender
+This project provides a CLI tool that serializes a JSON file into a [Protocol Buffers](https://developers.google.com/protocol-buffers) message and sends it to a RabbitMQ queue (**person-queue**).
 It also supports consuming messages from the queue using a parameter.  
 It is developed using Java 17+ and Spring Boot.
 
@@ -46,6 +46,10 @@ Example for a file stored at C:/tmp/folder2/example2.json:
 ```bash
 docker-compose run --rm -v "C:/tmp/folder2:/app/data" protobuf-sender --file=/app/data/example2.json
 ```
+Using the RabbitMQ management console, we can see the messages are available for any consumer with access to the broker:  
+
+![RabbitMQ console](docs/img/rabbitmqconsole.PNG)  
+
 An example of the JSON format supported is:
 ```json
 {
@@ -60,7 +64,9 @@ Use ```--consume=true``` to run the tool as a consumer, reading messages from th
 **Example**:
 ```bash
 docker-compose run --rm protobuf-sender --consume=true
-```
+```  
+![consumer](docs/img/consumer.PNG)  
+
 ## Notes ##
 - The application exits automatically after sending or consuming messages. For example, here is a simple Python consumer using pika:
 ```python
