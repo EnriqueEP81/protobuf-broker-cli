@@ -1,6 +1,7 @@
 # protobuf-sender
-This project provides a CLI tool that serializes a JSON file into a [Protocol Buffers](https://developers.google.com/protocol-buffers) message and sends it to a RabbitMQ queue (**person-queue**).
+This project provides a CLI tool that serializes a JSON file into a [Protocol Buffers](https://developers.google.com/protocol-buffers) message and sends it to a RabbitMQ queue.
 It also supports consuming messages from the queue using a parameter.  
+The name of the queue is configurable, for our tests we use (**person-queue**)
 It is developed using Java 17+ and Spring Boot.
 
 The protobuf message used is:
