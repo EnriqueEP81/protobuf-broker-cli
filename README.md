@@ -1,7 +1,7 @@
 # protobuf-sender
 This project provides a CLI tool that serializes a JSON file into a [Protocol Buffers](https://developers.google.com/protocol-buffers) message and sends it to a RabbitMQ queue.
 It also supports consuming messages from the queue using a parameter.  
-The name of the queue is configurable, for our tests we use (**person-queue**)
+The name of the queue is configurable, for our tests we use (**person-queue**)  
 It is developed using Java 17+ and Spring Boot.
 
 The protobuf message used is:
@@ -13,7 +13,8 @@ message Person {
   optional string email = 3;
 }
 ```
-The protobuf has been compiled to a Java class using **protoc-31.1-win64.zip** (https://github.com/protocolbuffers/protobuf/releases/tag/v31.1)
+The protobuf has been compiled to a Java class using **protoc-31.1-win64.zip** (https://github.com/protocolbuffers/protobuf/releases/tag/v31.1)  
+RabbitMQ is chosen over Kafka since it’s lighter and easier to run for this CLI tool
 
 ## Start RabbitMQ
 
@@ -69,7 +70,7 @@ docker-compose run --rm protobuf-sender --consume=true
 ![consumer](docs/img/consumer.PNG)  
 
 ## Notes ##
-- The application exits automatically after sending or consuming messages. For example, here is a simple Python consumer using pika:
+- The application exits automatically after sending or consuming messages. For example, here is an alternative for a consumer in Python using pika:
 ```python
 import pika
 
